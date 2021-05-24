@@ -1,4 +1,5 @@
 from kakebo import app
+from flask import jsonify
 import sqlite3
 
 @app.route('/')
@@ -9,18 +10,14 @@ def index():
     cur.execute("SELECT * FROM movimientos;")
 
     claves = cur.description
-    
     filas = cur.fetchall()
-    d = {}
-
-
-
-
-
-    l = []
+    movimientos = []
     for fila in filas:
         d = {}
-        for columna in fila:
+        for tclave, valor in zip(claves, fila):
+            d[tclave[0]] = valor
+        movimientos.append(d)
+
     conexion.close()
 
-    return "Consulta realizada"
+    return jsonify(movimientos)
