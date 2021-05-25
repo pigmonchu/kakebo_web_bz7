@@ -4,5 +4,10 @@
 
 {% block contenido %}
 <h1>Nuevo movimiento  </h1>
-<p>Aquí irá un formulario</p>
+<form action="nuevo" method="post">
+    {{ form.fecha() }}
+    {{ form.concepto() }}
+    {{ form.categoria() }}
+    {{ form.submit()}}
+</form>
 {% endblock %}
