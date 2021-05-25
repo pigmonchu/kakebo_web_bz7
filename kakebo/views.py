@@ -1,5 +1,5 @@
 from kakebo import app
-from flask import jsonify, render_template
+from flask import jsonify, render_template, request
 from kakebo.forms import MovimientosForm
 
 import sqlite3
