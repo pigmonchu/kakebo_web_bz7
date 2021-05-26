@@ -39,9 +39,28 @@ def nuevo():
     if request.method == 'GET':
         return render_template('alta.html', form = formulario)
     else:
+
         if formulario.validate():
-            pass
-            #Insertar el movimiento en la base de datos
+            conexion = sqlite3.connect("movimientos.db")
+            cur = conexion.cursor()
+
+            query = "INSERT INTO movimientos VALUES (fecha, concepto, categoria, esGasto, cantidad) (?, ?, ?, ?, ?)"
+            cur.execute(query, [formulario.fecha.data, formulario.concepto.data, formulario.categoria.data,
+                                formulario.esGasto.data, formulario.cantidad.data])
+
+            """
+            query = "INSERT INTO movimientos VALUES (fecha, concepto, categoria, esGasto, cantidad) (:fecha, :concepto, :categoria, :esGasto, :cantidad)"
+            cur.execute(query, {
+                'fecha': formulario.fecha.data, 
+                'concepto': formulario.concepto.data, 
+                'categoria': formulario.categoria.data,
+                'esGasto': formulario.esGasto.data, 
+                'cantidad':formulario.cantidad.data
+            }
+            """
+
+            conexion.commit()
+
             #Redirect a la ruta /
         else:
             return render_template('alta.html', form = formulario)
