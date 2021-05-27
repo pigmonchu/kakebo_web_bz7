@@ -1,33 +1,54 @@
 from kakebo import app
-from flask import jsonify, render_template, request, redirect, url_for
+from flask import jsonify, render_template, request, redirect, url_for, flash
 from kakebo.forms import MovimientosForm
 
 import sqlite3
 
-@app.route('/')
-def index():
+def consultaSQL(query):
+    # Abrimos la conexion
     conexion = sqlite3.connect("movimientos.db")
     cur = conexion.cursor()
 
-    cur.execute("SELECT * FROM movimientos;")
+    # Ejecutamos la consulta
+    cur.execute(query)
 
+    # Obtenemos los datos de la consulta
     claves = cur.description
     filas = cur.fetchall()
-    movimientos = []
-    saldo = 0
+
+    # Procesar los datos para devolver una lista de diccionarios. Un diccionario por fila
+
+    resultado = []
     for fila in filas:
         d = {}
         for tclave, valor in zip(claves, fila):
             d[tclave[0]] = valor
-            print(d)
+        resultado.append(d)
+
+    conexion.close()
+    return resultado
+
+def modificaTablaSQL(query, parametros=[]):
+    conexion = sqlite3.connect("movimientos.db")
+    cur = conexion.cursor()
+
+    cur.execute(query, parametros)
+
+    conexion.commit()
+    conexion.close()
+    
+
+@app.route('/')
+def index():
+    movimientos = consultaSQL("SELECT * FROM movimientos order by fecha;")
+
+    saldo = 0
+    for d in movimientos:
         if d['esGasto'] == 0:
             saldo = saldo + d['cantidad']
         else:
             saldo = saldo - d['cantidad']
         d['saldo'] = saldo
-        movimientos.append(d)
-
-    conexion.close()
 
     return render_template('movimientos.html', datos = movimientos)
 
@@ -41,30 +62,16 @@ def nuevo():
     else:
 
         if formulario.validate():
-            conexion = sqlite3.connect("movimientos.db")
-            cur = conexion.cursor()
-
-            query = "INSERT INTO movimientos (fecha, concepto, categoria, esGasto, cantidad) VALUES (?, ?, ?, ?, ?)"
+            query = "INSERT INTO movimientos VALUES (fecha, concepto, categoria, esGasto, cantidad) (?, ?, ?, ?, ?)"
             try:
-                cur.execute(query, [formulario.fecha.data, formulario.concepto.data, formulario.categoria.data,
+                modificaTablaSQL(query, [formulario.fecha.data, formulario.concepto.data, formulario.categoria.data,
                                 formulario.esGasto.data, formulario.cantidad.data])
 
             except sqlite3.Error as el_error:
                 print("Error en SQL INSERT", el_error)
+                flash("Se ha producido un error en la base de datos. Pruebe en unos minutos")
+                flash("Otro mensaje")
                 return render_template('alta.html', form=formulario)
-            """
-            query = "INSERT INTO movimientos (fecha, concepto, categoria, esGasto, cantidad) VALUES (:fecha, :concepto, :categoria, :esGasto, :cantidad)"
-            cur.execute(query, {
-                'fecha': formulario.fecha.data, 
-                'concepto': formulario.concepto.data, 
-                'categoria': formulario.categoria.data,
-                'esGasto': formulario.esGasto.data, 
-                'cantidad':formulario.cantidad.data
-            }
-            """
-
-            conexion.commit()
-            conexion.close()
 
             return redirect(url_for("index"))
 

@@ -11,3 +11,14 @@
     font-weight: bold;
     margin-left: 105px;
 }
+
+
+.popup {
+ background-color: floralwhite;
+}
+
+.popup > p {
+    font-size: 1.2em;
+    text-align: center;
+    color: darkred;
+}
