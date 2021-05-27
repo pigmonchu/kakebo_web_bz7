@@ -1,5 +1,5 @@
 from kakebo import app
-from flask import jsonify, render_template, request
+from flask import jsonify, render_template, request, redirect, url_for
 from kakebo.forms import MovimientosForm
 
 import sqlite3
@@ -44,12 +44,16 @@ def nuevo():
             conexion = sqlite3.connect("movimientos.db")
             cur = conexion.cursor()
 
-            query = "INSERT INTO movimientos VALUES (fecha, concepto, categoria, esGasto, cantidad) (?, ?, ?, ?, ?)"
-            cur.execute(query, [formulario.fecha.data, formulario.concepto.data, formulario.categoria.data,
+            query = "INSERT INTO movimientos (fecha, concepto, categoria, esGasto, cantidad) VALUES (?, ?, ?, ?, ?)"
+            try:
+                cur.execute(query, [formulario.fecha.data, formulario.concepto.data, formulario.categoria.data,
                                 formulario.esGasto.data, formulario.cantidad.data])
 
+            except sqlite3.Error as el_error:
+                print("Error en SQL INSERT", el_error)
+                return render_template('alta.html', form=formulario)
             """
-            query = "INSERT INTO movimientos VALUES (fecha, concepto, categoria, esGasto, cantidad) (:fecha, :concepto, :categoria, :esGasto, :cantidad)"
+            query = "INSERT INTO movimientos (fecha, concepto, categoria, esGasto, cantidad) VALUES (:fecha, :concepto, :categoria, :esGasto, :cantidad)"
             cur.execute(query, {
                 'fecha': formulario.fecha.data, 
                 'concepto': formulario.concepto.data, 
@@ -60,6 +64,9 @@ def nuevo():
             """
 
             conexion.commit()
+            conexion.close()
+
+            return redirect(url_for("index"))
 
             #Redirect a la ruta /
         else:
