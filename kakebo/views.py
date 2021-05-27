@@ -62,7 +62,7 @@ def nuevo():
     else:
 
         if formulario.validate():
-            query = "INSERT INTO movimientos VALUES (fecha, concepto, categoria, esGasto, cantidad) (?, ?, ?, ?, ?)"
+            query = "INSERT INTO movimientos (fecha, concepto, categoria, esGasto, cantidad) VALUES (?, ?, ?, ?, ?)"
             try:
                 modificaTablaSQL(query, [formulario.fecha.data, formulario.concepto.data, formulario.categoria.data,
                                 formulario.esGasto.data, formulario.cantidad.data])
@@ -70,7 +70,6 @@ def nuevo():
             except sqlite3.Error as el_error:
                 print("Error en SQL INSERT", el_error)
                 flash("Se ha producido un error en la base de datos. Pruebe en unos minutos")
-                flash("Otro mensaje")
                 return render_template('alta.html', form=formulario)
 
             return redirect(url_for("index"))
@@ -78,3 +77,8 @@ def nuevo():
             #Redirect a la ruta /
         else:
             return render_template('alta.html', form = formulario)
+
+
+@app.route('/borrar/<int:id>', methods=['GET', 'POST'])
+def borrar(id):
+    return render_template('borrar.html', identificador = id)
