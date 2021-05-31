@@ -1,6 +1,6 @@
 from kakebo import app
 from flask import jsonify, render_template, request, redirect, url_for, flash
-from kakebo.forms import MovimientosForm
+from kakebo.forms import MovimientosForm, FiltraMovimientosForm
 from datetime import date
 
 import sqlite3
@@ -41,7 +41,13 @@ def modificaTablaSQL(query, parametros=[]):
 
 @app.route('/')
 def index():
-    movimientos = consultaSQL("SELECT * FROM movimientos order by fecha;")
+    filtraForm = FiltraMovimientosForm()
+    """
+    TODO: Validar filtraForm
+    TODO: crear query adecuada
+    """
+
+    movimientos = consultaSQL(query)
 
     saldo = 0
     for d in movimientos:
@@ -51,7 +57,7 @@ def index():
             saldo = saldo - d['cantidad']
         d['saldo'] = saldo
 
-    return render_template('movimientos.html', datos = movimientos)
+    return render_template('movimientos.html', datos = movimientos, formulario = filtraForm)
 
 
 @app.route('/nuevo', methods=['GET', 'POST'])
