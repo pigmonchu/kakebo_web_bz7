@@ -34,7 +34,7 @@
         </tr>
         {% endfor %}
     </table>
-    <form action="/" method="get">
+    <form action="/" method="post">
         <fieldset class="container">
             {{ formulario.hidden_tag() }}
             <div>
@@ -61,5 +61,6 @@
             </div>
         </fieldset>
         {{ formulario.submit}}
+        <a href="/">Reset</a>
     </form>
 {% endblock %}
