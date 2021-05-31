@@ -112,4 +112,24 @@ def modificar(id):
         formulario = MovimientosForm(data=registro)
         
         return render_template('modificar.html', form=formulario)
-    else:
+
+    if request.method == 'POST':
+        formulario = MovimientosForm()
+        if formulario.validate():
+            try:
+                modificaTablaSQL("UPDATE movimientos SET fecha = ?, concepto = ?, categoria = ?, esGasto = ?, cantidad = ? WHERE id = ?",
+                                [formulario.fecha.data,
+                                formulario.concepto.data,
+                                formulario.categoria.data,
+                                formulario.esGasto.data,
+                                formulario.cantidad.data,
+                                id]
+                )
+                flash("Modificación realizada con éxito", "aviso")
+                return redirect(url_for("index"))
+            except sqlite3.Error as e:
+                print("Error en update:", e)
+                flash("Se ha producido un error en acceso a base de datos. Contacte con administrador", "error")
+                return render_template('modificar.html', form=formulario)
+        else:
+            return render_template('modificar.html', form=formulario)
