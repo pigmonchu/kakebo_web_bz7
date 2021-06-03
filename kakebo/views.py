@@ -7,23 +7,23 @@ from kakebo.dataaccess import *
 dbManager = DBmanager()
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    filtraForm = FiltraMovimientosForm()
+    
+    filtraForm = FiltraMovimientosForm(data=request.values)
     query = "SELECT * FROM movimientos WHERE 1 = 1"
     parametros = []
 
-    if request.method == 'POST':
-        if filtraForm.validate():
-            if filtraForm.fechaDesde.data != None:
-                query += " AND fecha >= ?" 
-                parametros.append(filtraForm.fechaDesde.data)
-            if filtraForm.fechaHasta.data != None:
-                query += " AND fecha <= ?"
-                parametros.append(filtraForm.fechaHasta.data)
-            if filtraForm.texto.data != '':
-                query += ' AND concepto LIKE ?'
-                parametros.append("%{}%".format(filtraForm.texto.data))  
+    if filtraForm.validate():
+        if filtraForm.fechaDesde.data != None:
+            query += " AND fecha >= ?" 
+            parametros.append(filtraForm.fechaDesde.data)
+        if filtraForm.fechaHasta.data != None:
+            query += " AND fecha <= ?"
+            parametros.append(filtraForm.fechaHasta.data)
+        if filtraForm.texto.data != '':
+            query += ' AND concepto LIKE ?'
+            parametros.append("%{}%".format(filtraForm.texto.data))  
 
     query += " ORDER BY fecha"
     print(query)

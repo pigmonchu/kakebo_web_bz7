@@ -5,6 +5,8 @@ from datetime import date
 
 def fecha_por_debajo_de_hoy(formulario, campo):
     hoy = date.today()
+    if isinstance(campo.data, str):
+        campo.data = date.fromisoformat(campo.data)
     if campo.data > hoy:
         raise ValidationError('La fecha {} no puede ser mayor que {}'.format(campo.data, hoy))
 
