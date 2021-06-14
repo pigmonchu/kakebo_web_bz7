@@ -4,7 +4,9 @@ from kakebo.forms import MovimientosForm, FiltraMovimientosForm
 from datetime import date
 from kakebo.dataaccess import *
 
-dbManager = DBmanager()
+DBPATH = app.config.get("DATABASE")
+
+dbManager = DBmanager(DBPATH)
 
 
 @app.route('/')
@@ -68,12 +70,12 @@ def nuevo():
 @app.route('/borrar/<int:id>', methods=['GET', 'POST'])
 def borrar(id):
     if request.method == 'GET':
-        filas = dbManager.consultaUnaSQL("SELECT * FROM movimientos WHERE id=?", [id])
-        if len(filas) == 0:
+        fila = dbManager.consultaUnaSQL("SELECT * FROM movimientos WHERE id=?", [id])
+        if not fila:
             flash("El registro no existe", "error")
             return render_template('borrar.html', )
         
-        return render_template('borrar.html', movimiento=filas[0])
+        return render_template('borrar.html', movimiento=fila)
     else:
         try:
             dbManager.modificaTablaSQL("DELETE FROM movimientos WHERE id = ?;", [id])
@@ -88,7 +90,7 @@ def borrar(id):
 def modificar(id):
     if request.method == 'GET':
         registro = dbManager.consultaUnaSQL("SELECT * FROM movimientos WHERE id=?", [id])
-        if not registro == 0:
+        if not registro:
             flash("El registro no existe", "error")
             return render_template('modificar.html', )
         registro['fecha'] = date.fromisoformat(registro['fecha'])
