@@ -35,3 +35,12 @@
     font-weight: bold;
     color: darkred;
 }
+
+ul.menu {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+ul.menu li {
+    display: inline-block;
+}

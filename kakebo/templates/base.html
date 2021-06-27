@@ -12,6 +12,12 @@
     <header>
         Kakebo Web - BZ VII
     </header>
+    <nav>
+        <ul class="menu">
+            <li><a href="/nuevo">Alta</a></li>
+            <li><a href="/">Inicio</a></li>
+        </ul>
+    </nav>
     {% with mensajes = get_flashed_messages(with_categories = true) %}
         {% if mensajes %}
         <div class="popup">
