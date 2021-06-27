@@ -20,7 +20,7 @@ pip install -r requirements.txt
     - Informar SECRET_KEY. Un buen sitio para crear claves [aqui](https://randomkeygen.com/) 
     - Informar el fichero de bases de datos. La ruta debe estar dentro del proyecto
 
-4. Crear base de datos ejecutando el fichero `migrations/initial.sql``
+4. Crear base de datos ejecutando el fichero `migrations/initial.sql`
     - puedes hacerlo con un cliente gráfico o con sqlite3
     - Ejecutar lo siguiente
 ```
@@ -29,4 +29,9 @@ sqlite3 <ruta al fichero puesto en config.py>
 .tables 
 .q
 ```
-      `.tables`
+## Ejecutar en local
+
+Simplemente escribir
+```
+flask run
+```
