@@ -12,7 +12,7 @@ pip install -r requirements.txt
 2. Crear variables de entorno
     - Duplicar el fichero `.env_template`
     - Renombrar la copia a `.env`
-    - Informar FLASK_ENV a elegir entre `development` y `production``
+    - Informar FLASK_ENV a elegir entre `development` y `production`
 
 3. Crear fichero de configuracion
     - Duplicar el fichero `config_templape.py`
